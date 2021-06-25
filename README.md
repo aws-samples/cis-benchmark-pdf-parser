@@ -41,13 +41,15 @@ The script will parse each page and extract the information corresponding to the
 Rule, Profile Applicability, Description, Rationale, Audit, Remediation, CIS Controls
 ```
 
-## Notes
+## Testing Notes
 
 **Tested against:**
 
 * CIS_Oracle_Linux_7_Benchmark_v3.1.1
 * CIS_Red_Hat_Enterprise_Linux_8_Benchmark_v1.0.1
 * CIS_Red_Hat_Enterprise_Linux_7_Benchmark_v3.1.1
+
+You will need provide a copy of or download the latest CIS Benchmark files from the [Center for Internet Security](https://learn.cisecurity.org/benchmarks).
 
 ## Security
 
