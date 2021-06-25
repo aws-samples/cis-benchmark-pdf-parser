@@ -8,7 +8,7 @@ cis_pdf_parser.py is dependent upon python3, the fitz, csv, re, logging, and arg
 
 Run the following:
 ```
-$ pip install requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ## Usage
