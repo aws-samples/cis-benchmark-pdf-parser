@@ -6,9 +6,9 @@ cis_pdf_parser.py is a python script for parsing CIS Benchmark PDF files from th
 
 This parser can provide useful for the following use cases:
 
-* This script's Comma Separated Value (CSV) output can be used to enhance security assessment result output from popular industry security assessment tools, which do not always include the Rationale, Audit, Remediation, and CIS Controls fields. 
-* This script's output is simple to further parse by its nature of being comma separated values, and can be ingested by other scripts or processes, such as a process which maps CIS Controls to various different operating system benchmarks.
-* This script can be used to automate conversion of each new release of a CIS Benchmark PDF file.
+* This script's Comma Separated Value (CSV) output can be used to enhance security assessment result output from popular industry security assessment tools, which do not always include the Rationale, Audit, Remediation, and CIS Controls fields found in the full PDF version of the benchmark.
+* This script's output is simple to further parse by its nature of being comma separated values, and can be ingested by other scripts or processes, such as a process which maps each CIS Control category to the user's chosen operating system benchmarks.
+* This script can also be used to automate conversion of a CIS Benchmark PDF file upon each new version release.
 
 ## Setup
 
