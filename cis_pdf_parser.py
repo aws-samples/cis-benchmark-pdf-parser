@@ -14,14 +14,15 @@ import argparse
     acnt,
     rat_count,
     rem_count,
+    defval_count,
     cis_count,
-) = (0,) * 7
+) = (0,) * 8
 firstPage = None
 seenList = []
 
 # Setup console logging
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 logging_streamhandler = logging.StreamHandler(stream=None)
 logging_streamhandler.setFormatter(
     logging.Formatter(fmt="%(asctime)s %(levelname)-8s %(message)s")
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     # Skip to actual rules
     for currentPage in range(len(doc)):
         findPage = doc.loadPage(currentPage)
-        if findPage.searchFor("Recommendations 1 Initial Setup"):
+        if findPage.searchFor("Recommendations 1 "):
             firstPage = currentPage
 
     # If no "Recommendations" and "Initial Setup" it is not a full CIS Benchmark .pdf file
@@ -71,6 +72,7 @@ if __name__ == "__main__":
                 "Rationale",
                 "Audit",
                 "Remediation",
+                "Default Value",
                 "CIS Controls",
             ]
         )
@@ -83,10 +85,16 @@ if __name__ == "__main__":
 
                 # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
                 try:
-                    pattern = "(\d+(?:\.\d.\d+)?)(.*?)(\(Automated\)|\(Manual\))"
+                    # This regex works for Windows 2019 CIS BenchMark
+                    pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
+                    # This regex works for Linux CIS benchmark
+                    # pattern = "(\d+(?:\.\d.\d+)+)(.*?)(\(Automated\)|\(Manual\))"
                     rerule = re.search(pattern, data, re.DOTALL)
                     if rerule is not None:
-                        rule = rerule.group(2).split("P a g e", 1)[1].strip()
+                        # Mandatory for Linux CIS benchmark                   
+                        # rule = rerule.group(2).split("P a g e", 1)[1].strip()
+                        # Working for windows CIS
+                        rule = rerule.group()
                         rule_count += 1
                 except IndexError:
                     logger.info("*** Page does not contain a Rule Name ***")
@@ -120,19 +128,27 @@ if __name__ == "__main__":
 
                 # Get Audit by splits as it is always between Audit and Remediation, faster than regex
                 try:
-                    a_post = data.split("Audit:", 1)[1]
+                    a_post = data.split("\nAudit:", 1)[1]
                     audit = a_post.partition("Remediation")[0].strip()
                     acnt += 1
                 except IndexError:
                     logger.info("*** Page does not contain Audit ***")
 
-                # Get Remediation by splits as it is always between Remediation and CIS Controls, faster than regex
+                # Get Remediation by splits as it is always between Remediation and Default value, faster than regex
                 try:
                     rem_post = data.split("Remediation:", 1)[1]
-                    rem = rem_post.partition("CIS Controls:")[0].strip()
+                    rem = rem_post.partition("Default Value:")[0].strip()
                     rem_count += 1
                 except IndexError:
                     logger.info("*** Page does not contain Remediation ***")
+                
+                 # Get Default Value by splits as it is always between Default Value and CIS Controls, faster than regex
+                try:
+                    defval_post = data.split("Default Value:", 1)[1]
+                    defval = defval_post.partition("CIS Controls:")[0].strip()
+                    defval_count += 1
+                except IndexError:
+                    logger.info("*** Page does not contain Default Value ***")
 
                 # Get CIS Controls by splits as they are always between CIS Controls and P a g e, regex the result
                 try:
@@ -152,14 +168,16 @@ if __name__ == "__main__":
                         rat_count,
                         acnt,
                         rem_count,
+                        defval_count,
                         cis_count,
                     ]
+                    logging.debug(row_count)
                     if row_count.count(row_count[0]) == len(row_count):
                         # Have we seen this rule before? If not, write it to file
                         if row_count not in seenList:
                             seenList = [row_count]
                             logger.info("*** Writing the following rule to csv: ***")
-                            row = [rule, level, description, rat, audit, rem, cis]
+                            row = [rule, level, description, rat, audit, rem, defval, cis]
                             logger.info(row)
                             rule_writer.writerow(row)
                 page += 1
