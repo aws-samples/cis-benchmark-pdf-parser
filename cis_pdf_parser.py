@@ -5,6 +5,7 @@ import csv
 import re
 import logging
 import argparse
+import sys
 
 # Initialize variables
 (
@@ -36,12 +37,22 @@ if __name__ == "__main__":
     )
     required = parser.add_argument_group("required arguments")
     required.add_argument(
-        "--pdf_file", type=str, required=True, help="PDF File to Parse"
+        "--pdf_file", type=str, required=True, help="PDF File to parse"
     )
     required.add_argument(
         "--out_file", type=str, required=True, help="Output file in .csv format"
     )
+    required.add_argument(
+        '-l', '--log-level', type=str, required=False, help="Set log level (DEBUG, INFO, etc). Default to INFO", default="INFO"
+    )
     args = parser.parse_args()
+
+    try:
+        logger.setLevel(args.log_level)
+    except ValueError:
+        logging.error("Invalid log level: {}. Valid log levels can be found here "
+                      "https://docs.python.org/3/howto/logging.html".format(args.log_level))
+        sys.exit(1)
 
     # Open PDF File
     doc = fitz.open(args.pdf_file)
@@ -110,7 +121,7 @@ if __name__ == "__main__":
                 except IndexError:
                     logger.info("*** Page does not contain Profile Levels ***")
 
-                # Get Description by splits as it is always between Desccription and Rationale, faster than regex
+                # Get Description by splits as it is always between Description and Rationale, faster than regex
                 try:
                     d_post = data.split("Description:", 1)[1]
                     description = d_post.partition("Rationale")[0].strip()
@@ -141,7 +152,7 @@ if __name__ == "__main__":
                     rem_count += 1
                 except IndexError:
                     logger.info("*** Page does not contain Remediation ***")
-                
+
                  # Get Default Value by splits as it is always between Default Value and CIS Controls, faster than regex
                 try:
                     defval_post = data.split("Default Value:", 1)[1]
