@@ -117,8 +117,6 @@ def main():
             if page < len(doc):
                 data = doc.loadPage(page).getText("text")
                 logger.info("*** Parsing Page Number: %i ***", page)
-                if page == 197 :
-                    logger.warning("breakpoint")
 
                 # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
                 try:
