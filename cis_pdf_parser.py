@@ -86,6 +86,22 @@ def main():
 
     logger.info("*** Total Number of Pages: %i ***", doc.pageCount)
 
+    # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
+    try:
+        if CISName == "Red Hat Enterprise Linux 7":
+            pattern = "(\d+(?:\.\d.\d+)+)(.*?)(\(Automated\)|\(Manual\))"
+        elif CISName == "Microsoft Windows Server 2019":
+            pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
+
+        rerule = re.search(pattern, data, re.DOTALL)
+        if rerule is not None:
+            rule = rerule.group()
+            rule_count += 1
+    except IndexError:
+        logger.info("*** Page does not contain a Rule Name ***")
+    except AttributeError:
+        logger.info("*** Page does not contain a Rule Name ***")
+
     # Open output .csv file for writing
     with open(args.out_file, mode="w") as cis_outfile:
         rule_writer = csv.writer(
@@ -110,24 +126,7 @@ def main():
                 data = doc.loadPage(page).getText("text")
                 logger.info("*** Parsing Page Number: %i ***", page)
 
-                # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
-                try:
-                    if CISName == "Red Hat Enterprise Linux 7":
-                        pattern = "(\d+(?:\.\d.\d+)+)(.*?)(\(Automated\)|\(Manual\))"
-                    elif CISName == "Microsoft Windows Server 2019":
-                        pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
 
-                    rerule = re.search(pattern, data, re.DOTALL)
-                    if rerule is not None:
-                        # Mandatory for Linux CIS benchmark
-                        # rule = rerule.group(2).split("P a g e", 1)[1].strip()
-                        # Working for windows CIS
-                        rule = rerule.group()
-                        rule_count += 1
-                except IndexError:
-                    logger.info("*** Page does not contain a Rule Name ***")
-                except AttributeError:
-                    logger.info("*** Page does not contain a Rule Name ***")
 
                 # Get Profile Applicability by splits as it is always between Profile App. and Description, faster than regex
                 try:
