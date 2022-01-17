@@ -65,12 +65,16 @@ def main():
         pattern = "(?<=CIS).*(?=Benchmark)"
         rerule = re.search(pattern, coverPageText, re.DOTALL)
         if rerule is not None:
-            CISName = rerule.group(0).strip()
+            CISName = rerule.group(0).strip().replace('\n','')
             logger.info("*** Document found name: {} ***".format(CISName))
-            if CISName == "Red Hat Enterprise Linux 7":
+            if "Red Hat Enterprise Linux 7" in CISName:
                 pattern = "(\d+(?:\.\d.\d*)+)(.*?)(\(Automated\)|\(Manual\))"
-            elif CISName == "Microsoft Windows Server 2019":
-                pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
+            elif "Microsoft Windows Server 2019" in CISName:
+                pattern = "(\d+(?:\.\d+)+)\s\(((L[12])|(NG))\)(.*?)(\(Automated\)|\(Manual\))"
+            elif "Microsoft Windows 10 Enterprise" in CISName:
+                pattern = "(\d+(?:\.\d+)+)\s\(((L[12])|(NG)|(BL))\)(.*?)(\(Automated\)|\(Manual\))"
+            else:
+                raise ValueError("Could not find a matching regex for {}".format(CISName))
     except IndexError:
         logger.error("*** Could not find CIS Name, exiting. ***")
         exit()
@@ -113,7 +117,7 @@ def main():
             if page < len(doc):
                 data = doc.loadPage(page).getText("text")
                 logger.info("*** Parsing Page Number: %i ***", page)
-                if page == 150 or page ==126:
+                if page == 197 :
                     logger.warning("breakpoint")
 
                 # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
