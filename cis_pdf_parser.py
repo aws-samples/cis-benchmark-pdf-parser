@@ -68,7 +68,7 @@ def main():
             CISName = rerule.group(0).strip()
             logger.info("*** Document found name: {} ***".format(CISName))
             if CISName == "Red Hat Enterprise Linux 7":
-                pattern = "(\d+(?:\.\d.\d+)+)(.*?)(\(Automated\)|\(Manual\))"
+                pattern = "(\d+(?:\.\d.\d*)+)(.*?)(\(Automated\)|\(Manual\))"
             elif CISName == "Microsoft Windows Server 2019":
                 pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
     except IndexError:
@@ -113,8 +113,8 @@ def main():
             if page < len(doc):
                 data = doc.loadPage(page).getText("text")
                 logger.info("*** Parsing Page Number: %i ***", page)
-                if page == 150:
-                    logger.warning("line 150")
+                if page == 150 or page ==126:
+                    logger.warning("breakpoint")
 
                 # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
                 try:
