@@ -67,6 +67,10 @@ def main():
         if rerule is not None:
             CISName = rerule.group(0).strip()
             logger.info("*** Document found name: {} ***".format(CISName))
+            if CISName == "Red Hat Enterprise Linux 7":
+                pattern = "(\d+(?:\.\d.\d+)+)(.*?)(\(Automated\)|\(Manual\))"
+            elif CISName == "Microsoft Windows Server 2019":
+                pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
     except IndexError:
         logger.error("*** Could not find CIS Name, exiting. ***")
         exit()
@@ -85,22 +89,6 @@ def main():
         exit()
 
     logger.info("*** Total Number of Pages: %i ***", doc.pageCount)
-
-    # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
-    try:
-        if CISName == "Red Hat Enterprise Linux 7":
-            pattern = "(\d+(?:\.\d.\d+)+)(.*?)(\(Automated\)|\(Manual\))"
-        elif CISName == "Microsoft Windows Server 2019":
-            pattern = "(\d+(?:\.\d+)+)\s(\([LN][12G]\))(.*?)(\(Automated\)|\(Manual\))"
-
-        rerule = re.search(pattern, data, re.DOTALL)
-        if rerule is not None:
-            rule = rerule.group()
-            rule_count += 1
-    except IndexError:
-        logger.info("*** Page does not contain a Rule Name ***")
-    except AttributeError:
-        logger.info("*** Page does not contain a Rule Name ***")
 
     # Open output .csv file for writing
     with open(args.out_file, mode="w") as cis_outfile:
@@ -125,8 +113,19 @@ def main():
             if page < len(doc):
                 data = doc.loadPage(page).getText("text")
                 logger.info("*** Parsing Page Number: %i ***", page)
+                if page == 150:
+                    logger.warning("line 150")
 
-
+                # Get rule by matching regex pattern for x.x.* (Automated) or (Manual), there are no "x.*" we care about
+                try:
+                    rerule = re.search(pattern, data, re.DOTALL)
+                    if rerule is not None:
+                        rule = rerule.group()
+                        rule_count += 1
+                except IndexError:
+                    logger.info("*** Page does not contain a Rule Name ***")
+                except AttributeError:
+                    logger.info("*** Page does not contain a Rule Name ***")
 
                 # Get Profile Applicability by splits as it is always between Profile App. and Description, faster than regex
                 try:
