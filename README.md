@@ -22,17 +22,19 @@ $ pip install -r requirements.txt
 ## Usage
 
 ```
-$ python3 cis_pdf_parser.py -h
-usage: cis_pdf_parser.py [-h] [--pdf_file PDF_FILE] [--out_file OUT_FILE]
+$ python3 cis_pdf_parser.py --help
+usage: cis_pdf_parser.py [-h] --pdf_file PDF_FILE --out_file OUT_FILE [-l LOG_LEVEL]
 
 Parses CIS Benchmark PDF content into CSV Format
 
 optional arguments:
-  -h, --help           show this help message and exit
+  -h, --help            show this help message and exit
 
 required arguments:
-  --pdf_file PDF_FILE  PDF File to Parse
-  --out_file OUT_FILE  Output file in .csv format
+  --pdf_file PDF_FILE   PDF File to parse
+  --out_file OUT_FILE   Output file in .csv format
+  -l LOG_LEVEL, --log-level LOG_LEVEL
+                        Set log level (DEBUG, INFO, etc). Default to INFO
 ```
 
 ## Full Command Example:
