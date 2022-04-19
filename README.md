@@ -72,3 +72,4 @@ This library is licensed under the MIT-0 License. See the LICENSE file.
 ## Contributors
 
 David Bailey, [dbawssec@amazon.com](mailto:dbawssec@amazon.com)
+ThibautB, [thibon](https://github.com/thibon)
