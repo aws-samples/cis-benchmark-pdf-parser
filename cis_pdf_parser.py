@@ -25,7 +25,7 @@ def main():
 
     # Setup console logging
     logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     logging_streamhandler = logging.StreamHandler(stream=None)
     logging_streamhandler.setFormatter(
         logging.Formatter(fmt="%(asctime)s %(levelname)-8s %(message)s")
