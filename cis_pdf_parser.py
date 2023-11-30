@@ -69,6 +69,8 @@ def main():
             logger.info("*** Document found name: {} ***".format(CISName))
             if "Red Hat Enterprise Linux 7" in CISName:
                 pattern = "(\d+(?:\.\d.\d*)+)(.*?)(\(Automated\)|\(Manual\))"
+            elif "Debian Linux 11" in CISName:
+                pattern = "(\d+(?:\.\d.\d*)+)(.*?)(\(Automated\)|\(Manual\))"
             elif "Microsoft Windows Server 2019" in CISName:
                 pattern = "(\d+(?:\.\d+)+)\s\(((L[12])|(NG))\)(.*?)(\(Automated\)|\(Manual\))"
             elif "Microsoft Windows 10 Enterprise" in CISName:
@@ -202,8 +204,8 @@ def main():
                         rat_count,
                         acnt,
                         rem_count,
-                        defval_count,
-                        cis_count,
+                        #defval_count,
+                        #cis_count,
                     ]
                     logging.debug(row_count)
                     if row_count.count(row_count[0]) == len(row_count):
